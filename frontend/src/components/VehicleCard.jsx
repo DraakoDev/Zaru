@@ -1,6 +1,10 @@
 import { Car, Fuel, Gauge } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export const VehicleCard = ({ vehiculo }) => {
+
+  const navigate = useNavigate();
+
   return (
     <div
       className="
@@ -67,18 +71,19 @@ export const VehicleCard = ({ vehiculo }) => {
         </h2>
 
         <button
-          className="
-            mt-5
-            w-full
-            h-12
-            rounded-xl
-            bg-orange-500
-            hover:bg-orange-400
-            transition
-          "
-        >
-          Ver detalles
-        </button>
+  onClick={() => navigate(`/vehiculo/${vehiculo.id}`)}
+  className="
+    mt-5
+    w-full
+    h-12
+    rounded-xl
+    bg-orange-500
+    hover:bg-orange-400
+    transition
+  "
+>
+  Ver detalles
+</button>
       </div>
     </div>
   );

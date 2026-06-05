@@ -1,4 +1,7 @@
 import { ArrowLeft, Fuel, Gauge, Calendar, Car } from "lucide-react";
+import { useParams,useNavigate } from "react-router";
+import { useEffect,useState } from "react";
+import { getVehiculoById } from "../services/vehiculoService";
 
 export default function DetalleVehiculo() {
   const vehiculo = {

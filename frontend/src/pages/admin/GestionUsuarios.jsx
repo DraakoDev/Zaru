@@ -1,17 +1,10 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import {useEffect,useState,} from "react";
 import { BotonLogout } from "../../components/BotonLogout.jsx";
-import {
-  getPersonas,
-  getUsuarios,
-  getVendedores,
-} from "../../services/userService";
-
-import {
-  DynamicTable,
-} from "../../components/tables/DynamicTable";
+import {getPersonas,getUsuarios,getVendedores,getEmpresas,getVehiculos,} from "../../services/userService";
+import {DynamicTable,} from "../../components/tables/DynamicTable";
+import { Modal } from "../../components/ui/Modal";
+import { EmpresaForm } from "../../components/forms/EmpresaForm";
+import { VehiculoForm } from "../../components/forms/VehiculoForm";
 
 export const GestionUsuarios = () => {
 
@@ -22,6 +15,14 @@ export const GestionUsuarios = () => {
   const [data,
     setData] =
     useState([]);
+
+const [showEmpresaModal,
+  setShowEmpresaModal] =
+  useState(false);
+
+const [showVehiculoModal,
+  setShowVehiculoModal] =
+  useState(false);
 
   const loadData = async () => {
 
@@ -51,6 +52,24 @@ export const GestionUsuarios = () => {
       setData(res);
 
     }
+
+    if (active === "empresas") {
+
+  const res =
+    await getEmpresas();
+
+  setData(res);
+
+}
+
+if (active === "vehiculos") {
+
+  const res =
+    await getVehiculos();
+
+  setData(res);
+
+}
   };
 
   useEffect(() => {
@@ -148,6 +167,61 @@ export const GestionUsuarios = () => {
     },
   ];
 
+  const empresaColumns = [
+
+  {
+    key: "nit",
+    label: "NIT",
+  },
+
+  {
+    key: "nombre",
+    label: "Nombre",
+  },
+
+  {
+    key: "direccion",
+    label: "Dirección",
+  },
+
+  {
+    key: "telefono",
+    label: "Teléfono",
+  },
+
+  {
+    key: "correo",
+    label: "Correo",
+  },
+];
+
+const vehiculoColumns = [
+
+  {
+    key: "numero_bastidor",
+    label: "Bastidor",
+  },
+
+  {
+    key: "marca",
+    label: "Marca",
+  },
+
+  {
+    key: "modelo",
+    label: "Modelo",
+  },
+
+  {
+    key: "precio",
+    label: "Precio",
+  },
+
+  {
+    key: "estado",
+    label: "Estado",
+  },
+];
   return (
 
     <div
@@ -232,24 +306,57 @@ export const GestionUsuarios = () => {
           </div>
 
           <button
-            className="
-              h-14
-              px-8
-              rounded-2xl
-              bg-orange-500
-              hover:bg-orange-400
-              text-white
-              font-semibold
-              transition-all
-              duration-300
-              hover:scale-[1.02]
-              active:scale-[0.98]
-              shadow-[0_10px_30px_rgba(249,115,22,.25)]
-              cursor-pointer
-            "
-          >
-            Nuevo usuario
-          </button>
+
+  onClick={() => {
+
+    if (active === "empresas") {
+
+      setShowEmpresaModal(true);
+
+    }
+
+    if (active === "vehiculos") {
+
+      setShowVehiculoModal(true);
+
+    }
+
+  }}
+
+  className="
+    h-14
+    px-8
+    rounded-2xl
+    bg-orange-500
+    hover:bg-orange-400
+    text-white
+    font-semibold
+    transition-all
+    duration-300
+    hover:scale-[1.02]
+  "
+>
+
+  {
+    active === "empresas"
+      ? "Nueva Empresa"
+
+      : active === "vehiculos"
+      ? "Nuevo Vehículo"
+
+      : active === "personas"
+? "Nueva Persona"
+
+: active === "usuarios"
+? "Nuevo Usuario"
+
+: active === "vendedores"
+? "Nuevo Vendedor"
+
+: "Nuevo Registro"
+  }
+
+</button>
 
         </section>
 
@@ -373,8 +480,76 @@ export const GestionUsuarios = () => {
           >
             Vendedores
           </button>
+        <button
+  onClick={() =>
+    setActive("empresas")
+  }
 
+  className={`
+
+    h-14
+    px-7
+    rounded-2xl
+    font-semibold
+    transition-all
+    duration-300
+
+    ${
+      active === "empresas"
+
+      ? `
+        bg-orange-500
+        text-white
+      `
+
+      : `
+        bg-[#111111]
+        border
+        border-white/5
+        text-zinc-300
+      `
+    }
+  `}
+>
+  Empresas
+</button>
+
+<button
+  onClick={() =>
+    setActive("vehiculos")
+  }
+
+  className={`
+
+    h-14
+    px-7
+    rounded-2xl
+    font-semibold
+    transition-all
+    duration-300
+
+    ${
+      active === "vehiculos"
+
+      ? `
+        bg-orange-500
+        text-white
+      `
+
+      : `
+        bg-[#111111]
+        border
+        border-white/5
+        text-zinc-300
+      `
+    }
+  `}
+>
+  Vehículos
+</button>
         </section>
+
+
 
         {/* TABLA */}
 
@@ -412,12 +587,18 @@ export const GestionUsuarios = () => {
               >
                 {
                   active === "personas"
-                  ? "Listado de personas"
+? "Listado de personas"
 
-                  : active === "usuarios"
-                  ? "Listado de usuarios"
+: active === "usuarios"
+? "Listado de usuarios"
 
-                  : "Listado de vendedores"
+: active === "vendedores"
+? "Listado de vendedores"
+
+: active === "empresas"
+? "Listado de empresas"
+
+: "Listado de vehículos"
                 }
               </h2>
 
@@ -425,12 +606,18 @@ export const GestionUsuarios = () => {
 
                 {
                   active === "personas"
-                  ? "Consulta todas las personas registradas."
+? "Consulta todas las personas registradas."
 
-                  : active === "usuarios"
-                  ? "Administra los usuarios del sistema."
+: active === "usuarios"
+? "Administra los usuarios del sistema."
 
-                  : "Consulta los vendedores registrados."
+: active === "vendedores"
+? "Consulta los vendedores registrados."
+
+: active === "empresas"
+? "Consulta las empresas registradas."
+
+: "Consulta los vehículos registrados."
                 }
 
               </p>
@@ -492,12 +679,69 @@ export const GestionUsuarios = () => {
 
             )}
 
+{active === "empresas" && (
+
+  <DynamicTable
+    columns={empresaColumns}
+    data={data}
+  />
+
+)}
+
+{active === "vehiculos" && (
+
+  <DynamicTable
+    columns={vehiculoColumns}
+    data={data}
+  />
+
+)}
           </div>
 
         </section>
-          <BotonLogout />
-      </div>
-          
-    </div>
+
+<Modal
+  isOpen={showEmpresaModal}
+  onClose={() => setShowEmpresaModal(false)}
+  title="Registrar Empresa"
+>
+  <EmpresaForm
+    onSubmit={(data) => {
+
+      console.log("Empresa:", data);
+
+      // Aquí luego irá:
+      // createEmpresa(data)
+
+      setShowEmpresaModal(false);
+
+    }}
+  />
+</Modal>
+
+<Modal
+  isOpen={showVehiculoModal}
+  onClose={() => setShowVehiculoModal(false)}
+  title="Registrar Vehículo"
+>
+  <VehiculoForm
+    onSubmit={(data) => {
+
+      console.log("Vehículo:", data);
+
+      // Aquí luego irá:
+      // createVehiculo(data)
+
+      setShowVehiculoModal(false);
+
+    }}
+  />
+</Modal>
+
+<BotonLogout />
+
+</div>
+
+</div>
   );
 };

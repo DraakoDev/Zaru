@@ -1,5 +1,4 @@
 import { ShoppingCart, Heart, Car, DollarSign } from "lucide-react";
-
 import { StatCard } from "../components/ui/StatCard";
 import { useContext } from "react";
 import { AuthContext } from "../context/contextos.js";
@@ -10,6 +9,7 @@ export const VistaCliente = () => {
   const { logout } = useContext(AuthContext);
 const vehiculos = [
   {
+    id: 1,
     nombre: "Mazda 3 Touring",
     modelo: "2023",
     precio: "$85.000.000",
@@ -21,6 +21,7 @@ const vehiculos = [
   },
 
   {
+    id: 2,
     nombre: "Toyota Corolla",
     modelo: "2022",
     precio: "$78.000.000",
@@ -32,6 +33,7 @@ const vehiculos = [
   },
 
   {
+    id: 3,
     nombre: "BMW Serie 3",
     modelo: "2024",
     precio: "$210.000.000",
