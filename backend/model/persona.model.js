@@ -1,5 +1,5 @@
 import { pool } from '../db/conexion.js'
-import { INSERTAR_PERSONA, BUSCAR_PERSONA, LISTAR_PERSONAS, ACTUALIZAR_PERSONA, ELIMINAR_PERSONA, LISTAR_VENDEDORES } from '../db/queries/persona.queries.js'
+import { INSERTAR_PERSONA, SELECCIONAR_PERSONA, ACTUALIZAR_PERSONA, SELECCIONAR_PERSONAS } from '../db/queries/persona.queries.js'
 
 export const crearPersona = async (persona) => {
   let conexion
@@ -27,7 +27,7 @@ export const crearPersona = async (persona) => {
 
 export const obtenerPersona = async (cedula) => {
   try {
-    const data = await pool.query(BUSCAR_PERSONA, cedula)
+    const data = await pool.query(SELECCIONAR_PERSONA, cedula)
     if (!data[0]) throw new Error('La persona no fue encontrada')
     return data[0]
   } catch (error) {
@@ -37,7 +37,7 @@ export const obtenerPersona = async (cedula) => {
 
 export const listarPersonas = async () => {
   try {
-    const data = await pool.query(LISTAR_PERSONAS)
+    const data = await pool.query(SELECCIONAR_PERSONAS)
     return data
   } catch (error) {
     throw new Error('Error listando personas: ' + error.message)
@@ -63,25 +63,6 @@ export const actualizarPersona = async (cedula, persona) => {
       throw new Error('El correo ya está registrado')
     }
     throw new Error('Error actualizando la persona: ' + error.message)
-  } finally {
-    if (conexion) conexion.release()
-  }
-}
-
-export const eliminarPersona = async (cedula) => {
-  let conexion
-  try {
-    conexion = await pool.getConnection()
-
-    console.log(cedula)
-    const resultado = await conexion.query(ELIMINAR_PERSONA, [cedula])
-    console.log(resultado)
-
-    if (resultado.affectedRows === 0) throw new Error('La persona no fue encontrada')
-
-    return { mensaje: 'Persona eliminada correctamente' }
-  } catch (error) {
-    throw new Error('Error eliminando la persona: ' + error.message)
   } finally {
     if (conexion) conexion.release()
   }

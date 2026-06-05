@@ -1,7 +1,6 @@
-export const INSERTAR_USUARIO = 'INSERT INTO usuario VALUES (? ,?, ?, ?)'
-export const SELECCIONAR_USUARIO = 'SELECT * FROM usuario WHERE nombre_usuario = ?'
-export const REPASSWORD = 'UPDATE usuario SET contrasena = ? WHERE nombre_usuario = ?'
-export const ELIMINAR_USUARIO = 'DELETE FROM usuario WHERE nombre_usuario = ?'
-export const ELIMINAR_USUARIO_POR_CEDULA = 'DELETE FROM usuario WHERE cedula = ?'
-export const EDITAR_USUARIO = 'UPDATE usuario SET tipo = ? WHERE nombre_usuario = ?'
-export const LISTAR_USUARIOS = 'SELECT nombre_usuario, cedula, tipo FROM usuario'
+export const INSERTAR_USUARIO = "INSERT INTO usuario (nombre_usuario, contrasena, cedula, tipo) VALUES (?, ?, ?, ?)";
+export const SELECCIONAR_USUARIOS = "SELECT * FROM usuario";
+export const SELECCIONAR_USUARIO = "SELECT * FROM usuario WHERE nombre_usuario = ?";
+export const ACTUALIZAR_USUARIO = "UPDATE usuario SET contrasena = ?, cedula = ?, tipo = ? WHERE nombre_usuario = ?";
+export const ACTUALIZAR_CONTRASENA = "UPDATE usuario SET contrasena = ? WHERE nombre_usuario = ?";
+export const ACTUALIZAR_TIPO_USUARIO = "UPDATE usuario SET tipo = ? WHERE nombre_usuario = ?";

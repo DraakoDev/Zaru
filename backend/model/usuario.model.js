@@ -1,6 +1,6 @@
 import { pool } from '../db/conexion.js'
-import { BUSCAR_PERSONA, INSERTAR_PERSONA } from '../db/queries/persona.queries.js'
-import { ELIMINAR_USUARIO, INSERTAR_USUARIO, REPASSWORD, SELECCIONAR_USUARIO, LISTAR_USUARIOS, EDITAR_USUARIO } from '../db/queries/user.queries.js'
+import { SELECCIONAR_PERSONA, INSERTAR_PERSONA } from '../db/queries/persona.queries.js'
+import { INSERTAR_USUARIO, ACTUALIZAR_CONTRASENA, SELECCIONAR_USUARIO, SELECCIONAR_USUARIOS, ACTUALIZAR_TIPO_USUARIO } from '../db/queries/user.queries.js'
 import bcrypt from 'bcrypt'
 
 export const getUserInDB = async (user) => {
@@ -9,7 +9,7 @@ export const getUserInDB = async (user) => {
 }
 
 export const getPersonInDB = async (cedula) => {
-  const data = await pool.query(BUSCAR_PERSONA, cedula)
+  const data = await pool.query(SELECCIONAR_PERSONA, cedula)
   return data[0]
 }
 
@@ -39,7 +39,7 @@ export const crearPersona = async (conexion, persona) => {
 }
 
 export const buscarPersona = async (conexion, cedula) => {
-  return await conexion.query(BUSCAR_PERSONA, cedula)
+  return await conexion.query(SELECCIONAR_PERSONA, cedula)
 }
 
 export const cambiarContrasena = async (username, contrasena) => {
@@ -50,7 +50,7 @@ export const cambiarContrasena = async (username, contrasena) => {
     console.log(contrasena)
     conexion = await pool.getConnection()
     const newHashedPassword = await bcrypt.hash(contrasena, 8)
-    const data = await conexion.query(REPASSWORD, [newHashedPassword, username])
+    const data = await conexion.query(ACTUALIZAR_CONTRASENA, [newHashedPassword, username])
     return data.affectedRows
   } catch (error) {
     console.log(error)
@@ -106,7 +106,7 @@ export const actualizarUsuario = async (username, tipo) => {
   let conexion
   try {
     conexion = await pool.getConnection()
-    const data = await conexion.query(EDITAR_USUARIO, [tipo, username])
+    const data = await conexion.query(ACTUALIZAR_TIPO_USUARIO, [tipo, username])
     if (data.affectedRows === 0) throw new Error('El usuario no fue encontrado')
     return data
   } catch (error) {
@@ -125,13 +125,9 @@ export const eliminarUsuario = async (username) => {
   }
 }
 
-export const eliminarUsuarioPorCedula = async (conexion, cedula) => {
-  return await conexion.query(ELIMINAR_USUARIO_POR_CEDULA, cedula)
-}
-
 export const listarUsuarios = async () => {
   try {
-    const data = await pool.query(LISTAR_USUARIOS)
+    const data = await pool.query(SELECCIONAR_USUARIOS)
     return data
   } catch (error) {
     throw new Error('Error listando usuarios: ' + error.message)
