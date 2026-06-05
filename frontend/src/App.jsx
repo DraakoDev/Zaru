@@ -8,7 +8,7 @@ import { ProtectedRoute } from "./routes/ProtectedRoute.jsx";
 import { AuthProvider } from "./context/authContext.jsx";
 import { RecuperacionPage } from "./pages/RecuperacionPage";
 import { CambioContraPage } from "./pages/CambioContraPage";
-
+import DetalleVehiculo from "./pages/DetalleVehiculo";
 function App() {
   return (
     <BrowserRouter>
@@ -20,7 +20,7 @@ function App() {
           <Route path="/registro" element={<CrearCuenta />} />
           <Route path="/recover-password"  element={<RecuperacionPage />}/> 
           <Route path="/cambiar-password" element={<CambioContraPage />}/>
-
+          <Route path="/vehiculo/:id"  element={<DetalleVehiculo />}/>
            
           {/* PRIVADAS */}
 
