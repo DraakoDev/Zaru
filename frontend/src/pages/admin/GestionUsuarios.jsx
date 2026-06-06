@@ -8,6 +8,10 @@ import {
   getVendedores,
   getEmpresas,
   getVehiculos,
+  createEmpresa,
+  createMarca,
+  createModelo,
+  createAutomovil,
 } from "../../services/userService";
 import { DynamicTable } from "../../components/tables/DynamicTable";
 import { Modal } from "../../components/ui/modal";
@@ -224,144 +228,146 @@ export const GestionUsuarios = () => {
     } finally {
       setIsRegistering(false);
     }
+  };
 
-    const personaColumns = [
-      {
-        key: "cedula",
-        label: "Cédula",
-      },
+  const personaColumns = [
+    {
+      key: "cedula",
+      label: "Cédula",
+    },
 
-      {
-        key: "nombre",
-        label: "Nombre",
-      },
+    {
+      key: "nombre",
+      label: "Nombre",
+    },
 
-      {
-        key: "apellido",
-        label: "Apellido",
-      },
+    {
+      key: "apellido",
+      label: "Apellido",
+    },
 
-      {
-        key: "direccion",
-        label: "Dirección",
-      },
+    {
+      key: "direccion",
+      label: "Dirección",
+    },
 
-      {
-        key: "telefono",
-        label: "Teléfono",
-      },
+    {
+      key: "telefono",
+      label: "Teléfono",
+    },
 
-      {
-        key: "correo",
-        label: "Correo",
-      },
-    ];
+    {
+      key: "correo",
+      label: "Correo",
+    },
+  ];
 
-    const usuarioColumns = [
-      {
-        key: "nombre_usuario",
-        label: "Usuario",
-      },
+  const usuarioColumns = [
+    {
+      key: "nombre_usuario",
+      label: "Usuario",
+    },
 
-      {
-        key: "tipo",
-        label: "Tipo",
-      },
-    ];
+    {
+      key: "tipo",
+      label: "Tipo",
+    },
+  ];
 
-    const vendedorColumns = [
-      {
-        key: "cedula",
-        label: "Cédula",
-      },
+  const vendedorColumns = [
+    {
+      key: "cedula",
+      label: "Cédula",
+    },
 
-      {
-        key: "nombre",
-        label: "Nombre",
-      },
+    {
+      key: "nombre",
+      label: "Nombre",
+    },
 
-      {
-        key: "apellido",
-        label: "Apellido",
-      },
+    {
+      key: "apellido",
+      label: "Apellido",
+    },
 
-      {
-        key: "direccion",
-        label: "Dirección",
-      },
+    {
+      key: "direccion",
+      label: "Dirección",
+    },
 
-      {
-        key: "telefono",
-        label: "Teléfono",
-      },
+    {
+      key: "telefono",
+      label: "Teléfono",
+    },
 
-      {
-        key: "correo",
-        label: "Correo",
-      },
+    {
+      key: "correo",
+      label: "Correo",
+    },
 
-      {
-        key: "tipo",
-        label: "Tipo",
-      },
-    ];
+    {
+      key: "tipo",
+      label: "Tipo",
+    },
+  ];
 
-    const empresaColumns = [
-      {
-        key: "nit",
-        label: "NIT",
-      },
+  const empresaColumns = [
+    {
+      key: "nit",
+      label: "NIT",
+    },
 
-      {
-        key: "nombre",
-        label: "Nombre",
-      },
+    {
+      key: "nombre",
+      label: "Nombre",
+    },
 
-      {
-        key: "direccion",
-        label: "Dirección",
-      },
+    {
+      key: "direccion",
+      label: "Dirección",
+    },
 
-      {
-        key: "telefono",
-        label: "Teléfono",
-      },
+    {
+      key: "telefono",
+      label: "Teléfono",
+    },
 
-      {
-        key: "correo",
-        label: "Correo",
-      },
-    ];
+    {
+      key: "correo",
+      label: "Correo",
+    },
+  ];
 
-    const vehiculoColumns = [
-      {
-        key: "numero_bastidor",
-        label: "Bastidor",
-      },
+  const vehiculoColumns = [
+    {
+      key: "numero_bastidor",
+      label: "Bastidor",
+    },
 
-      {
-        key: "marca",
-        label: "Marca",
-      },
+    {
+      key: "marca",
+      label: "Marca",
+    },
 
-      {
-        key: "modelo",
-        label: "Modelo",
-      },
+    {
+      key: "modelo",
+      label: "Modelo",
+    },
 
-      {
-        key: "precio",
-        label: "Precio",
-      },
+    {
+      key: "precio",
+      label: "Precio",
+    },
 
-      {
-        key: "estado",
-        label: "Estado",
-      },
-    ];
-    return (
-      <div
-        className="
+    {
+      key: "estado",
+      label: "Estado",
+    },
+  ];
+
+  return (
+    <div
+      className="
         min-h-screen
         bg-[#09090b]
         relative
@@ -369,7 +375,7 @@ export const GestionUsuarios = () => {
         p-8
         text-white
       "
-      >
+    >
         {/* EFECTOS FONDO */}
 
         <div
@@ -939,13 +945,29 @@ export const GestionUsuarios = () => {
             title="Registrar Empresa"
           >
             <EmpresaForm
-              onSubmit={(data) => {
-                console.log("Empresa:", data);
-
-                // Aquí luego irá:
-                // createEmpresa(data)
-
-                setShowEmpresaModal(false);
+              onSubmit={async (formData) => {
+                try {
+                  const res = await createEmpresa(formData);
+                  if (res.success || !res.error) {
+                    Swal.fire({
+                      icon: "success",
+                      title: "Empresa Registrada",
+                      text: "La empresa se ha creado correctamente.",
+                      confirmButtonColor: "#22c55e",
+                    });
+                    setShowEmpresaModal(false);
+                    await loadData();
+                  } else {
+                    throw new Error(res.error || "Error al crear la empresa");
+                  }
+                } catch (error) {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: error.message,
+                    confirmButtonColor: "#f97316",
+                  });
+                }
               }}
             />
           </Modal>
@@ -956,13 +978,58 @@ export const GestionUsuarios = () => {
             title="Registrar Vehículo"
           >
             <VehiculoForm
-              onSubmit={(data) => {
-                console.log("Vehículo:", data);
+              onSubmit={async (formData) => {
+                try {
+                  // 1. Intentar crear la marca
+                  await createMarca({ nombre: formData.marca });
 
-                // Aquí luego irá:
-                // createVehiculo(data)
+                  // 2. Crear el modelo con su ficha técnica
+                  const modeloRes = await createModelo({
+                    marca_nombre: formData.marca,
+                    nombre: formData.modelo,
+                    precio: parseFloat(formData.precio),
+                    cilindraje: parseFloat(formData.cilindraje),
+                    potencia: parseFloat(formData.potencia),
+                    torque: parseFloat(formData.torque),
+                    motor: formData.motor,
+                    combustible: formData.combustible,
+                    carroceria: formData.carroceria,
+                    color_id: 1 
+                  });
 
-                setShowVehiculoModal(false);
+                  if (!modeloRes.id && !modeloRes.success && modeloRes.error) {
+                     throw new Error(modeloRes.error);
+                  }
+
+                  // 3. Registrar el automóvil en stock
+                  const autoRes = await createAutomovil({
+                    numero_bastidor: formData.numero_bastidor,
+                    modelo_id: modeloRes.id || modeloRes.data?.id,
+                    estado: formData.estado,
+                    registro_empresa_nit: formData.empresa_nit
+                  });
+
+                  if (autoRes.success || !autoRes.error) {
+                    Swal.fire({
+                      icon: "success",
+                      title: "Vehículo Registrado",
+                      text: "El automóvil se ha añadido al stock.",
+                      confirmButtonColor: "#22c55e",
+                    });
+                    setShowVehiculoModal(false);
+                    await loadData();
+                  } else {
+                    throw new Error(autoRes.error || "Error al registrar el automóvil");
+                  }
+
+                } catch (error) {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Error en el registro",
+                    text: error.message,
+                    confirmButtonColor: "#f97316",
+                  });
+                }
               }}
             />
           </Modal>
@@ -971,5 +1038,4 @@ export const GestionUsuarios = () => {
         </div>
       </div>
     );
-  };
 };

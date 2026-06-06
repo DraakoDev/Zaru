@@ -2,13 +2,7 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import { ViewActionButton } from "./ViewActionButton";
 import { EditActionButton } from "./EditActionButton";
-import { DeleteActionButton } from "./DeleteActionButton";
-import {
-  updatePersona,
-  updateUsuario,
-  deletePersona,
-  deleteUsuario,
-} from "../../services/userService";
+import { updatePersona, updateUsuario } from "../../services/userService";
 
 const getToken = () =>
   document.cookie
@@ -96,31 +90,6 @@ const EditModal = ({
         className="rounded-2xl bg-orange-500 px-6 py-3 text-white font-semibold hover:bg-orange-600 disabled:opacity-60"
       >
         {isSubmitting ? "Guardando..." : "Guardar cambios"}
-      </button>
-    </div>
-  </ModalWrapper>
-);
-
-const DeleteModal = ({ item, onDelete, onClose }) => (
-  <ModalWrapper title="Confirmar eliminación" onClose={onClose}>
-    <p className="text-slate-600 mb-6">
-      Estás a punto de eliminar el registro{" "}
-      <strong>{item.nombre_usuario ?? item.cedula ?? ""}</strong>.
-    </p>
-    <div className="flex flex-wrap gap-4 justify-end">
-      <button
-        type="button"
-        onClick={onClose}
-        className="rounded-2xl border border-slate-300 px-6 py-3 text-slate-700 hover:bg-slate-100"
-      >
-        Cancelar
-      </button>
-      <button
-        type="button"
-        onClick={onDelete}
-        className="rounded-2xl bg-red-500 px-6 py-3 text-white font-semibold hover:bg-red-600"
-      >
-        Eliminar
       </button>
     </div>
   </ModalWrapper>
@@ -236,51 +205,6 @@ const DynamicTable = ({ columns, data, entityType, onDataChange }) => {
     }
   };
 
-  const handleConfirmDelete = async () => {
-    if (!modalState.item) return;
-
-    const result = await Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Esta acción no se puede deshacer.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#f97316",
-      cancelButtonColor: "#64748b",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    });
-
-    if (!result.isConfirmed) return;
-
-    const token = getToken();
-
-    try {
-      if (entityType === "usuarios" && modalState.item.nombre_usuario) {
-        await deleteUsuario(token, modalState.item.nombre_usuario);
-      } else if (modalState.item.cedula) {
-        await deletePersona(token, modalState.item.cedula);
-      } else {
-        throw new Error("No se puede eliminar este registro desde aquí.");
-      }
-
-      await Swal.fire({
-        icon: "success",
-        title: "Eliminado",
-        text: "El registro fue eliminado correctamente.",
-        confirmButtonColor: "#f97316",
-      });
-      if (onDataChange) await onDataChange();
-      closeModal();
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: error?.message || "No se pudo eliminar el registro.",
-        confirmButtonColor: "#f97316",
-      });
-    }
-  };
-
   const renderRow = (item, rowIndex) => (
     <tr
       key={rowIndex}
@@ -295,7 +219,6 @@ const DynamicTable = ({ columns, data, entityType, onDataChange }) => {
         <div className="flex gap-3 flex-wrap">
           <ViewActionButton onClick={() => openModal("view", item)} />
           <EditActionButton onClick={() => openModal("edit", item)} />
-          <DeleteActionButton onClick={() => openModal("delete", item)} />
         </div>
       </td>
     </tr>
@@ -333,14 +256,6 @@ const DynamicTable = ({ columns, data, entityType, onDataChange }) => {
           onSave={handleSaveEdit}
           onClose={closeModal}
           isSubmitting={isSubmitting}
-        />
-      )}
-
-      {modalState.type === "delete" && modalState.item && (
-        <DeleteModal
-          item={modalState.item}
-          onDelete={handleConfirmDelete}
-          onClose={closeModal}
         />
       )}
     </div>

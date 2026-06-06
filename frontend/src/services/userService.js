@@ -83,3 +83,47 @@ export const getVehiculos = async () => {
 
   return response.json();
 };
+
+export const createEmpresa = async (data) => {
+  const response = await fetch(`${API}/empresas`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  return response.json();
+};
+
+export const createMarca = async (data) => {
+  const response = await fetch(`${API}/marcas`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  return response.json();
+};
+
+export const createModelo = async (data) => {
+  const response = await fetch(`${API}/modelos`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  return response.json();
+};
+
+export const createAutomovil = async (data) => {
+  const response = await fetch(`${API}/automoviles`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  return response.json();
+};
