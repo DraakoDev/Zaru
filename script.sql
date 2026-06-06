@@ -52,7 +52,6 @@ CREATE TABLE cliente (
     CONSTRAINT fk_cliente_persona
         FOREIGN KEY (cedula)
         REFERENCES persona(cedula)
-        ON DELETE CASCADE
 );
 
 CREATE TABLE vendedor (
@@ -60,9 +59,7 @@ CREATE TABLE vendedor (
     registro_empresa_nit VARCHAR(20) NOT NULL,
     CONSTRAINT fk_vendedor_persona
         FOREIGN KEY (cedula)
-        REFERENCES persona(cedula)
-        ON DELETE CASCADE,
-
+        REFERENCES persona(cedula),
     CONSTRAINT fk_vendedor_registro_empresa
         FOREIGN KEY (registro_empresa_nit)
         REFERENCES registro_empresa(nit)
@@ -74,7 +71,7 @@ CREATE TABLE usuario (
     cedula VARCHAR(20) NOT NULL,
     tipo VARCHAR(20) NOT NULL,
 
-    CONSTRAINT fk_usuario_persona 
+    CONSTRAINT fk_usuario_persona
         FOREIGN KEY (cedula)
         REFERENCES persona(cedula)
         ON DELETE CASCADE,
@@ -85,6 +82,16 @@ CREATE TABLE usuario (
 
 CREATE TABLE marca (
     nombre VARCHAR(50) PRIMARY KEY
+);
+
+CREATE TABLE marca_concesionario (
+    concesionario_nit VARCHAR(20) NOT NULL,
+    marca_nombre VARCHAR(50) NOT NULL,
+    PRIMARY KEY (concesionario_nit, marca_nombre),
+    CONSTRAINT fk_marca_concesionario_concesionario
+        FOREIGN KEY (concesionario_nit) REFERENCES concesionario(nit),
+    CONSTRAINT fk_marca_concesionario_marca
+        FOREIGN KEY (marca_nombre) REFERENCES marca(nombre)
 );
 
 CREATE TABLE modelo (
@@ -152,6 +159,7 @@ CREATE TABLE venta (
     id INT PRIMARY KEY AUTO_INCREMENT,
     numero_bastidor VARCHAR(20) NOT NULL UNIQUE,
     cedula_vendedor VARCHAR(20) NOT NULL,
+    cedula_cliente VARCHAR(20) NOT NULL,
     fecha_entrega DATE NOT NULL,
     fecha_venta DATE NOT NULL,
     matricula_asignada VARCHAR(20) NOT NULL UNIQUE,
@@ -162,6 +170,8 @@ CREATE TABLE venta (
         FOREIGN KEY (numero_bastidor) REFERENCES automovil(numero_bastidor),
     CONSTRAINT fk_venta_vendedor
         FOREIGN KEY (cedula_vendedor) REFERENCES vendedor(cedula),
+    CONSTRAINT fk_venta_cliente
+        FOREIGN KEY (cedula_cliente) REFERENCES cliente(cedula),
     CONSTRAINT chk_venta_metodo_pago
         CHECK (metodo_pago IN ('EFECTIVO', 'TARJETA', 'FINANCIAMIENTO'))
 );

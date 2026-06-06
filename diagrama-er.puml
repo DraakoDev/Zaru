@@ -1,131 +1,138 @@
-@startuml Diagrama ER - Concesionario
+@startuml Diagrama ER - Concesionario Zaru
 
 skinparam linetype ortho
 
 entity Empresa {
-    NIT <<PK>>
-    Nombre
-    Direccion
-    Telefono
-    Correo
+    nit <<PK>>
+    nombre
+    direccion
+    telefono
+    correo
 }
 
 entity RegistroEmpresa {
-    Empresa <<PK, FK>>
-    FechaRegistro
-    Tipo
+    nit <<PK, FK>>
+    fecha_registro
+    tipo_empresa
 }
 
 entity Concesionario {
-    RegistroEmpresa <<PK, FK>>
+    nit <<PK, FK>>
+    tipo_automoviles
 }
 
 entity ServicioOficial {
-    RegistroEmpresa <<PK, FK>>
-    Concesionario <<FK>>
+    nit <<PK, FK>>
+    concesionario_nit <<FK>>
 }
 
 entity Marca {
-    Nombre <<PK>>
+    nombre <<PK>>
 }
 
 entity MarcaConcesionario {
-    Concesionario <<PK, FK>>
-    Marca <<PK, FK>>
+    concesionario_nit <<PK, FK>>
+    marca_nombre <<PK, FK>>
 }
 
 entity Modelo {
-    Id <<PK>>
-    Marca <<FK>>
-    Nombre 
-    Precio
+    id <<PK>>
+    marca_nombre <<FK>>
+    nombre 
+    precio
 }
 
 entity FichaTecnica {
-    Modelo <<PK, FK>>
-    Cilindraje
-    Potencia
-    Torque
-    Motor
-    Combustible
-    Carroceria
-    Color <<FK>>
+    modelo_id <<PK, FK>>
+    cilindraje
+    potencia
+    torque
+    motor
+    combustible
+    carroceria
+    color_id <<FK>>
 }
 
 entity Equipamiento {
-    Id <<PK>>
-    Modelo <<FK>>
-    Accesorio <<FK>>
-    EsExtra
-    Precio
+    id <<PK>>
+    modelo_id <<FK>>
+    accesorio_id <<FK>>
+    es_extra
+    precio
 }
 
 entity Accesorio {
-    Id <<PK>>
-    Nombre
+    id <<PK>>
+    nombre
 }
 
 entity Automovil {
     numero_bastidor <<PK>>
-    Modelo <<FK>>
-    RegistroEmpresa <<FK>>
-    Estado
+    modelo_id <<FK>>
+    registro_empresa_nit <<FK>>
+    estado
 }
 
 entity Venta {
-    Id <<PK>>
-    Vehiculo <<FK Unique>>
-    Vendedor <<FK>>
-    FechaEntrega
-    FechaVenta
-    Matricula
-    EsEncargado
-    MetodoPago
-    PrecioVenta
+    id <<PK>>
+    numero_bastidor <<FK Unique>>
+    cedula_vendedor <<FK>>
+    cedula_cliente <<FK>>
+    fecha_entrega
+    fecha_venta
+    matricula_asignada <<Unique>>
+    es_encargo
+    metodo_pago
+    precio_venta
 }
 
 entity ExtraVenta {
-    Venta <<PK, FK>>
-    Equipamiento <<PK, FK>>
-    Precio
+    venta_id <<PK, FK>>
+    equipamiento_id <<PK, FK>>
+    precio
 }
 
 entity Persona {
-    Cedula <<PK>>
-    Nombre
-    Apellido
-    Direccion
-    Telefono
-    Correo
+    cedula <<PK>>
+    nombre
+    apellido
+    direccion
+    telefono
+    correo
 }
 
 entity Usuario {
-    Persona <<PK, FK>>
-    NombreUsuario
-    Contrasena
-    Tipo <<ADMIN, CLIENTE>>
+    nombre_usuario <<PK>>
+    contrasena
+    cedula <<FK>>
+    tipo
 }
 
 entity Vendedor {
-    Persona <<PK, FK>>
-    RegistroEmpresa <<FK>>
+    cedula <<PK, FK>>
+    registro_empresa_nit <<FK>>
+}
+
+entity Cliente {
+    cedula <<PK, FK>>
+    cantidad_compras
 }
 
 entity Descuento {
-    Id <<PK>>
-    Nombre
-    Porcentaje
-    Descripcion
+    id <<PK>>
+    nombre
+    porcentaje
+    descripcion
 }
 
 entity DescuentoAplicado {
-    Automovil <<PK, FK>>
-    Descuento <<PK, FK>>
+    automovil_id <<PK, FK>>
+    descuento_id <<PK, FK>>
 }
 
 entity Color {
-    Id <<PK>>
-    Nombre
+    id <<PK>>
+    nombre
 }
 
 hide methods
@@ -140,16 +147,18 @@ Marca ||--o{ MarcaConcesionario
 Marca ||--o{ Modelo
 Modelo ||--o{ Automovil
 Modelo ||--|| FichaTecnica
-Modelo ||--|{Equipamiento
+Modelo ||--|{ Equipamiento
 Accesorio |o--|{ Equipamiento
 Automovil ||--o| Venta
 Equipamiento ||--o{ ExtraVenta
 Venta ||--o{ ExtraVenta
 Vendedor ||--o{ Venta
+Cliente ||--o{ Venta
 Automovil ||--o{ DescuentoAplicado
 Descuento ||-right-o{ DescuentoAplicado
 RegistroEmpresa ||--o{ Automovil
 Persona ||--o| Usuario
 Persona ||--o| Vendedor
+Persona ||--o| Cliente
 Color ||--o{ FichaTecnica
 @enduml
