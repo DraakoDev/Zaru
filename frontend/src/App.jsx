@@ -18,19 +18,10 @@ function App() {
 
           <Route path="/login" element={<LoginPage />} />
           <Route path="/registro" element={<CrearCuenta />} />
-<<<<<<< HEAD
           <Route path="/recover-password" element={<RecuperacionPage />} />
-          <Route
-            path="/cambiar-password/:token"
-            element={<CambioContraPage />}
-          />
+          <Route path="/cambiar-password" element={<CambioContraPage />} />
+          <Route path="/vehiculo/:id" element={<DetalleVehiculo />} />
 
-=======
-          <Route path="/recover-password"  element={<RecuperacionPage />}/> 
-          <Route path="/cambiar-password" element={<CambioContraPage />}/>
-          <Route path="/vehiculo/:id"  element={<DetalleVehiculo />}/>
-           
->>>>>>> feat/tablas-crud
           {/* PRIVADAS */}
 
           <Route

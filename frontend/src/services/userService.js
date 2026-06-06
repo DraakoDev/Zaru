@@ -1,12 +1,4 @@
 const API = "http://localhost:3000";
-<<<<<<< HEAD
-=======
-
-export const getPersonas = async () => {
-
-  const response =
-    await fetch(`${API}/personas`);
->>>>>>> feat/tablas-crud
 
 export const getPersonas = async (token) => {
   const response = await fetch(`${API}/personas`, {
@@ -18,6 +10,7 @@ export const getPersonas = async (token) => {
   });
   return response.json();
 };
+
 export const updatePersona = async (token, cedula, data) => {
   const response = await fetch(`${API}/personas/${cedula}`, {
     method: 'PUT',
@@ -30,44 +23,6 @@ export const updatePersona = async (token, cedula, data) => {
   });
   return response.json();
 };
-
-<<<<<<< HEAD
-export const deletePersona = async (token, cedula) => {
-  const response = await fetch(`${API}/personas/${cedula}`, {
-    method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    credentials: 'include',
-  });
-  console.log(response);
-  
-  return response.json();
-};
-
-export const deleteUsuario = async (token, username) => {
-  const response = await fetch(`${API}/borrar/usuario/${username}`, {
-    method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    credentials: 'include',
-  });
-  return response.json();
-};
-=======
-export const getUsuarios = async () => {
-
-  const response =
-    await fetch(`${API}/usuarios`);
-
-  return response.json();
-};
-
-export const getVendedores = async () => {
->>>>>>> feat/tablas-crud
 
 export const updateUsuario = async (token, username, data) => {
   const response = await fetch(`${API}/usuarios/${username}`, {

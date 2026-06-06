@@ -1,24 +1,18 @@
-<<<<<<< HEAD
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { registerUser } from "../../services/userService";
 import { BotonLogout } from "../../components/BotonLogout.jsx";
 import {
   getPersonas,
   getUsuarios,
   getVendedores,
-  registerUser,
+  getEmpresas,
+  getVehiculos,
 } from "../../services/userService";
-
 import { DynamicTable } from "../../components/tables/DynamicTable";
-=======
-import {useEffect,useState,} from "react";
-import { BotonLogout } from "../../components/BotonLogout.jsx";
-import {getPersonas,getUsuarios,getVendedores,getEmpresas,getVehiculos,} from "../../services/userService";
-import {DynamicTable,} from "../../components/tables/DynamicTable";
-import { Modal } from "../../components/ui/Modal";
+import { Modal } from "../../components/ui/modal";
 import { EmpresaForm } from "../../components/forms/EmpresaForm";
 import { VehiculoForm } from "../../components/forms/VehiculoForm";
->>>>>>> feat/tablas-crud
 
 export const GestionUsuarios = () => {
   const [active, setActive] = useState("personas");
@@ -38,52 +32,49 @@ export const GestionUsuarios = () => {
     password: "",
   });
 
-  const loadData = useCallback(async () => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("access_token="))
-      ?.split("=")[1];
+  const [showEmpresaModal, setShowEmpresaModal] = useState(false);
 
-<<<<<<< HEAD
-    try {
-      if (active === "personas") {
-        const res = await getPersonas(token);
-        setData(res.data || []);
-      }
-=======
-const [showEmpresaModal,
-  setShowEmpresaModal] =
-  useState(false);
-
-const [showVehiculoModal,
-  setShowVehiculoModal] =
-  useState(false);
+  const [showVehiculoModal, setShowVehiculoModal] = useState(false);
 
   const loadData = async () => {
->>>>>>> feat/tablas-crud
+    try {
+      let res;
 
-      if (active === "usuarios") {
-        const res = await getUsuarios(token);
-        setData(res.data || []);
+      switch (active) {
+        case "personas":
+          res = await getPersonas();
+          break;
+
+        case "usuarios":
+          res = await getUsuarios();
+          break;
+
+        case "vendedores":
+          res = await getVendedores();
+          break;
+
+        case "empresas":
+          res = await getEmpresas();
+          break;
+
+        case "vehiculos":
+          res = await getVehiculos();
+          break;
+
+        default:
+          res = [];
       }
 
-      if (active === "vendedores") {
-        const res = await getVendedores(token);
-        setData(res.data || []);
-      }
+      setData(res?.data || res || []);
     } catch (error) {
       console.error("Error cargando datos:", error);
       setData([]);
     }
-  }, [active]);
+  };
 
   useEffect(() => {
-    const load = async () => {
-      await loadData();
-    };
-
-    load();
-  }, [loadData]);
+    loadData();
+  }, [active]);
 
   const handleCreateInputChange = (key, value) => {
     setNewUserForm((prev) => ({ ...prev, [key]: value }));
@@ -234,164 +225,143 @@ const [showVehiculoModal,
       setIsRegistering(false);
     }
 
-    if (active === "empresas") {
+    const personaColumns = [
+      {
+        key: "cedula",
+        label: "Cédula",
+      },
 
-  const res =
-    await getEmpresas();
+      {
+        key: "nombre",
+        label: "Nombre",
+      },
 
-  setData(res);
+      {
+        key: "apellido",
+        label: "Apellido",
+      },
 
-}
+      {
+        key: "direccion",
+        label: "Dirección",
+      },
 
-if (active === "vehiculos") {
+      {
+        key: "telefono",
+        label: "Teléfono",
+      },
 
-  const res =
-    await getVehiculos();
+      {
+        key: "correo",
+        label: "Correo",
+      },
+    ];
 
-  setData(res);
+    const usuarioColumns = [
+      {
+        key: "nombre_usuario",
+        label: "Usuario",
+      },
 
-}
-  };
+      {
+        key: "tipo",
+        label: "Tipo",
+      },
+    ];
 
-  const personaColumns = [
-    {
-      key: "cedula",
-      label: "Cédula",
-    },
+    const vendedorColumns = [
+      {
+        key: "cedula",
+        label: "Cédula",
+      },
 
-    {
-      key: "nombre",
-      label: "Nombre",
-    },
+      {
+        key: "nombre",
+        label: "Nombre",
+      },
 
-    {
-      key: "apellido",
-      label: "Apellido",
-    },
+      {
+        key: "apellido",
+        label: "Apellido",
+      },
 
-    {
-      key: "direccion",
-      label: "Dirección",
-    },
+      {
+        key: "direccion",
+        label: "Dirección",
+      },
 
-    {
-      key: "telefono",
-      label: "Teléfono",
-    },
+      {
+        key: "telefono",
+        label: "Teléfono",
+      },
 
-    {
-      key: "correo",
-      label: "Correo",
-    },
-  ];
+      {
+        key: "correo",
+        label: "Correo",
+      },
 
-  const usuarioColumns = [
-    {
-      key: "nombre_usuario",
-      label: "Usuario",
-    },
+      {
+        key: "tipo",
+        label: "Tipo",
+      },
+    ];
 
-    {
-      key: "tipo",
-      label: "Tipo",
-    },
-  ];
+    const empresaColumns = [
+      {
+        key: "nit",
+        label: "NIT",
+      },
 
-  const vendedorColumns = [
-    {
-      key: "cedula",
-      label: "Cédula",
-    },
+      {
+        key: "nombre",
+        label: "Nombre",
+      },
 
-    {
-      key: "nombre",
-      label: "Nombre",
-    },
+      {
+        key: "direccion",
+        label: "Dirección",
+      },
 
-    {
-      key: "apellido",
-      label: "Apellido",
-    },
+      {
+        key: "telefono",
+        label: "Teléfono",
+      },
 
-    {
-      key: "direccion",
-      label: "Dirección",
-    },
+      {
+        key: "correo",
+        label: "Correo",
+      },
+    ];
 
-    {
-      key: "telefono",
-      label: "Teléfono",
-    },
+    const vehiculoColumns = [
+      {
+        key: "numero_bastidor",
+        label: "Bastidor",
+      },
 
-    {
-      key: "correo",
-      label: "Correo",
-    },
+      {
+        key: "marca",
+        label: "Marca",
+      },
 
-    {
-      key: "tipo",
-      label: "Tipo",
-    },
-  ];
+      {
+        key: "modelo",
+        label: "Modelo",
+      },
 
-  const empresaColumns = [
+      {
+        key: "precio",
+        label: "Precio",
+      },
 
-  {
-    key: "nit",
-    label: "NIT",
-  },
-
-  {
-    key: "nombre",
-    label: "Nombre",
-  },
-
-  {
-    key: "direccion",
-    label: "Dirección",
-  },
-
-  {
-    key: "telefono",
-    label: "Teléfono",
-  },
-
-  {
-    key: "correo",
-    label: "Correo",
-  },
-];
-
-const vehiculoColumns = [
-
-  {
-    key: "numero_bastidor",
-    label: "Bastidor",
-  },
-
-  {
-    key: "marca",
-    label: "Marca",
-  },
-
-  {
-    key: "modelo",
-    label: "Modelo",
-  },
-
-  {
-    key: "precio",
-    label: "Precio",
-  },
-
-  {
-    key: "estado",
-    label: "Estado",
-  },
-];
-  return (
-    <div
-      className="
+      {
+        key: "estado",
+        label: "Estado",
+      },
+    ];
+    return (
+      <div
+        className="
         min-h-screen
         bg-[#09090b]
         relative
@@ -399,11 +369,11 @@ const vehiculoColumns = [
         p-8
         text-white
       "
-    >
-      {/* EFECTOS FONDO */}
+      >
+        {/* EFECTOS FONDO */}
 
-      <div
-        className="
+        <div
+          className="
           absolute
           w-125
           h-125
@@ -413,10 +383,10 @@ const vehiculoColumns = [
           -top-40
           -left-40
         "
-      />
+        />
 
-      <div
-        className="
+        <div
+          className="
           absolute
           w-100
           h-100
@@ -426,15 +396,15 @@ const vehiculoColumns = [
           bottom-0
           right-0
         "
-      />
+        />
 
-      {/* CONTENIDO */}
+        {/* CONTENIDO */}
 
-      <div className="relative z-10 space-y-8">
-        {/* HEADER */}
+        <div className="relative z-10 space-y-8">
+          {/* HEADER */}
 
-        <section
-          className="
+          <section
+            className="
             flex
             flex-col
             md:flex-row
@@ -442,70 +412,49 @@ const vehiculoColumns = [
             md:justify-between
             gap-6
           "
-        >
-          <div>
-            <h1
-              className="
+          >
+            <div>
+              <h1
+                className="
                 text-5xl
                 font-black
                 tracking-tight
                 text-white
               "
-            >
-              Gestión de Usuarios
-            </h1>
+              >
+                Gestión de Usuarios
+              </h1>
 
-            <p
-              className="
+              <p
+                className="
                 text-zinc-400
                 mt-3
                 text-sm
               "
-            >
-              Administra personas, usuarios y vendedores del sistema.
-            </p>
-          </div>
+              >
+                Administra personas, usuarios y vendedores del sistema.
+              </p>
+            </div>
 
-          <button
-<<<<<<< HEAD
-            onClick={() => setShowCreateModal(true)}
-            className="
-              h-14
-              px-8
-              rounded-2xl
-              bg-orange-500
-              hover:bg-orange-400
-              text-white
-              font-semibold
-              transition-all
-              duration-300
-              hover:scale-[1.02]
-              active:scale-[0.98]
-              shadow-[0_10px_30px_rgba(249,115,22,.25)]
-              cursor-pointer
-            "
-          >
-            Nuevo usuario
-          </button>
-=======
+            <button
+              onClick={() => {
+                if (
+                  active === "personas" ||
+                  active === "usuarios" ||
+                  active === "vendedores"
+                ) {
+                  setShowCreateModal(true);
+                }
 
-  onClick={() => {
+                if (active === "empresas") {
+                  setShowEmpresaModal(true);
+                }
 
-    if (active === "empresas") {
-
-      setShowEmpresaModal(true);
-
-    }
-
-    if (active === "vehiculos") {
-
-      setShowVehiculoModal(true);
-
-    }
-
-  }}
-
-  className="
+                if (active === "vehiculos") {
+                  setShowVehiculoModal(true);
+                }
+              }}
+              className="
     h-14
     px-8
     rounded-2xl
@@ -517,44 +466,33 @@ const vehiculoColumns = [
     duration-300
     hover:scale-[1.02]
   "
->
+            >
+              {active === "empresas"
+                ? "Nueva Empresa"
+                : active === "vehiculos"
+                  ? "Nuevo Vehículo"
+                  : active === "personas"
+                    ? "Nueva Persona"
+                    : active === "usuarios"
+                      ? "Nuevo Usuario"
+                      : active === "vendedores"
+                        ? "Nuevo Vendedor"
+                        : "Nuevo Registro"}
+            </button>
+          </section>
 
-  {
-    active === "empresas"
-      ? "Nueva Empresa"
+          {/* BOTONES */}
 
-      : active === "vehiculos"
-      ? "Nuevo Vehículo"
-
-      : active === "personas"
-? "Nueva Persona"
-
-: active === "usuarios"
-? "Nuevo Usuario"
-
-: active === "vendedores"
-? "Nuevo Vendedor"
-
-: "Nuevo Registro"
-  }
-
-</button>
-
->>>>>>> feat/tablas-crud
-        </section>
-
-        {/* BOTONES */}
-
-        <section
-          className="
+          <section
+            className="
             flex
             flex-wrap
             gap-4
           "
-        >
-          <button
-            onClick={() => setActive("personas")}
-            className={`
+          >
+            <button
+              onClick={() => setActive("personas")}
+              className={`
               h-14
               px-7
               rounded-2xl
@@ -580,13 +518,13 @@ const vehiculoColumns = [
                 `
               }
             `}
-          >
-            Personas
-          </button>
+            >
+              Personas
+            </button>
 
-          <button
-            onClick={() => setActive("usuarios")}
-            className={`
+            <button
+              onClick={() => setActive("usuarios")}
+              className={`
               h-14
               px-7
               rounded-2xl
@@ -612,13 +550,13 @@ const vehiculoColumns = [
                 `
               }
             `}
-          >
-            Usuarios
-          </button>
+            >
+              Usuarios
+            </button>
 
-          <button
-            onClick={() => setActive("vendedores")}
-            className={`
+            <button
+              onClick={() => setActive("vendedores")}
+              className={`
               h-14
               px-7
               rounded-2xl
@@ -644,17 +582,12 @@ const vehiculoColumns = [
                 `
               }
             `}
-          >
-            Vendedores
-          </button>
-<<<<<<< HEAD
-=======
-        <button
-  onClick={() =>
-    setActive("empresas")
-  }
-
-  className={`
+            >
+              Vendedores
+            </button>
+            <button
+              onClick={() => setActive("empresas")}
+              className={`
 
     h-14
     px-7
@@ -665,13 +598,11 @@ const vehiculoColumns = [
 
     ${
       active === "empresas"
-
-      ? `
+        ? `
         bg-orange-500
         text-white
       `
-
-      : `
+        : `
         bg-[#111111]
         border
         border-white/5
@@ -679,16 +610,13 @@ const vehiculoColumns = [
       `
     }
   `}
->
-  Empresas
-</button>
+            >
+              Empresas
+            </button>
 
-<button
-  onClick={() =>
-    setActive("vehiculos")
-  }
-
-  className={`
+            <button
+              onClick={() => setActive("vehiculos")}
+              className={`
 
     h-14
     px-7
@@ -699,13 +627,11 @@ const vehiculoColumns = [
 
     ${
       active === "vehiculos"
-
-      ? `
+        ? `
         bg-orange-500
         text-white
       `
-
-      : `
+        : `
         bg-[#111111]
         border
         border-white/5
@@ -713,18 +639,15 @@ const vehiculoColumns = [
       `
     }
   `}
->
-  Vehículos
-</button>
->>>>>>> feat/tablas-crud
-        </section>
+            >
+              Vehículos
+            </button>
+          </section>
 
+          {/* TABLA */}
 
-
-        {/* TABLA */}
-
-        <section
-          className="
+          <section
+            className="
             bg-[#111111]
             border
             border-white/5
@@ -732,9 +655,9 @@ const vehiculoColumns = [
             p-8
             shadow-[0_0_40px_rgba(0,0,0,.35)]
           "
-        >
-          <div
-            className="
+          >
+            <div
+              className="
               flex
               flex-col
               md:flex-row
@@ -743,71 +666,41 @@ const vehiculoColumns = [
               gap-4
               mb-8
             "
-          >
-            <div>
-              <h2
-                className="
+            >
+              <div>
+                <h2
+                  className="
                   text-3xl
                   font-black
                   text-white
                 "
-              >
-<<<<<<< HEAD
-                {active === "personas"
-                  ? "Listado de personas"
-                  : active === "usuarios"
-                    ? "Listado de usuarios"
-                    : "Listado de vendedores"}
-              </h2>
+                >
+                  {active === "personas"
+                    ? "Listado de personas"
+                    : active === "usuarios"
+                      ? "Listado de usuarios"
+                      : active === "vendedores"
+                        ? "Listado de vendedores"
+                        : active === "empresas"
+                          ? "Listado de empresas"
+                          : "Listado de vehículos"}
+                </h2>
 
-              <p className="text-zinc-500 mt-2 text-sm">
-                {active === "personas"
-                  ? "Consulta todas las personas registradas."
-                  : active === "usuarios"
-                    ? "Administra los usuarios del sistema."
-                    : "Consulta los vendedores registrados."}
-=======
-                {
-                  active === "personas"
-? "Listado de personas"
+                <p className="text-zinc-500 mt-2 text-sm">
+                  {active === "personas"
+                    ? "Consulta todas las personas registradas."
+                    : active === "usuarios"
+                      ? "Administra los usuarios del sistema."
+                      : active === "vendedores"
+                        ? "Consulta los vendedores registrados."
+                        : active === "empresas"
+                          ? "Consulta las empresas registradas."
+                          : "Consulta los vehículos registrados."}
+                </p>
+              </div>
 
-: active === "usuarios"
-? "Listado de usuarios"
-
-: active === "vendedores"
-? "Listado de vendedores"
-
-: active === "empresas"
-? "Listado de empresas"
-
-: "Listado de vehículos"
-                }
-              </h2>
-
-              <p className="text-zinc-500 mt-2 text-sm">
-
-                {
-                  active === "personas"
-? "Consulta todas las personas registradas."
-
-: active === "usuarios"
-? "Administra los usuarios del sistema."
-
-: active === "vendedores"
-? "Consulta los vendedores registrados."
-
-: active === "empresas"
-? "Consulta las empresas registradas."
-
-: "Consulta los vehículos registrados."
-                }
-
->>>>>>> feat/tablas-crud
-              </p>
-            </div>
-
-            <button
-              className="
+              <button
+                className="
                 h-14
                 px-7
                 rounded-2xl
@@ -821,283 +714,262 @@ const vehiculoColumns = [
                 active:scale-[0.98]
                 shadow-[0_10px_30px_rgba(249,115,22,.25)]
               "
-            >
-              Exportar datos
-            </button>
-          </div>
+              >
+                Exportar datos
+              </button>
+            </div>
 
-          <div
-            className="
+            <div
+              className="
               overflow-x-auto
               rounded-2xl
             "
-          >
-            {active === "personas" && (
-              <DynamicTable
-                columns={personaColumns}
-                data={data}
-                entityType={active}
-                onDataChange={loadData}
-              />
-            )}
+            >
+              {active === "personas" && (
+                <DynamicTable
+                  columns={personaColumns}
+                  data={data}
+                  entityType={active}
+                  onDataChange={loadData}
+                />
+              )}
 
-            {active === "usuarios" && (
-              <DynamicTable
-                columns={usuarioColumns}
-                data={data}
-                entityType={active}
-                onDataChange={loadData}
-              />
-            )}
+              {active === "usuarios" && (
+                <DynamicTable
+                  columns={usuarioColumns}
+                  data={data}
+                  entityType={active}
+                  onDataChange={loadData}
+                />
+              )}
 
-            {active === "vendedores" && (
-              <DynamicTable
-                columns={vendedorColumns}
-                data={data}
-                entityType={active}
-                onDataChange={loadData}
-              />
-            )}
-<<<<<<< HEAD
-=======
+              {active === "vendedores" && (
+                <DynamicTable
+                  columns={vendedorColumns}
+                  data={data}
+                  entityType={active}
+                  onDataChange={loadData}
+                />
+              )}
 
-{active === "empresas" && (
+              {active === "empresas" && (
+                <DynamicTable columns={empresaColumns} data={data} />
+              )}
 
-  <DynamicTable
-    columns={empresaColumns}
-    data={data}
-  />
+              {active === "vehiculos" && (
+                <DynamicTable columns={vehiculoColumns} data={data} />
+              )}
+            </div>
 
-)}
-
-{active === "vehiculos" && (
-
-  <DynamicTable
-    columns={vehiculoColumns}
-    data={data}
-  />
-
-)}
->>>>>>> feat/tablas-crud
-          </div>
-
-          {showCreateModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-8">
-              <div className="max-w-3xl w-full rounded-3xl bg-white p-8 text-slate-900 shadow-2xl">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">Nuevo usuario</h2>
-                  <button
-                    onClick={closeCreateModal}
-                    className="text-slate-500 hover:text-slate-900"
-                  >
-                    Cerrar
-                  </button>
-                </div>
-
-                <form
-                  onSubmit={handleCreateUser}
-                  className="grid gap-6 sm:grid-cols-2"
-                >
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-slate-600">
-                      Cédula
-                    </span>
-                    <input
-                      value={newUserForm.cedula}
-                      onChange={(e) =>
-                        handleCreateInputChange("cedula", e.target.value)
-                      }
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
-                      placeholder="Cédula"
-                    />
-                  </label>
-
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-slate-600">
-                      Nombre
-                    </span>
-                    <input
-                      value={newUserForm.nombre}
-                      onChange={(e) =>
-                        handleCreateInputChange("nombre", e.target.value)
-                      }
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
-                      placeholder="Nombre"
-                    />
-                  </label>
-
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-slate-600">
-                      Apellido
-                    </span>
-                    <input
-                      value={newUserForm.apellido}
-                      onChange={(e) =>
-                        handleCreateInputChange("apellido", e.target.value)
-                      }
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
-                      placeholder="Apellido"
-                    />
-                  </label>
-
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-slate-600">
-                      Teléfono
-                    </span>
-                    <input
-                      value={newUserForm.telefono}
-                      onChange={(e) =>
-                        handleCreateInputChange("telefono", e.target.value)
-                      }
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
-                      placeholder="Teléfono"
-                    />
-                  </label>
-
-                  <label className="space-y-2 sm:col-span-2">
-                    <span className="text-sm font-medium text-slate-600">
-                      Correo
-                    </span>
-                    <input
-                      value={newUserForm.correo}
-                      onChange={(e) =>
-                        handleCreateInputChange("correo", e.target.value)
-                      }
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
-                      placeholder="Correo"
-                    />
-                  </label>
-
-                  <label className="space-y-2 sm:col-span-2">
-                    <span className="text-sm font-medium text-slate-600">
-                      Dirección
-                    </span>
-                    <input
-                      value={newUserForm.direccion}
-                      onChange={(e) =>
-                        handleCreateInputChange("direccion", e.target.value)
-                      }
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
-                      placeholder="Dirección"
-                    />
-                  </label>
-
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-slate-600">
-                      Tipo de usuario
-                    </span>
-                    <select
-                      value={newUserForm.tipo_usuario}
-                      onChange={(e) =>
-                        handleCreateInputChange("tipo_usuario", e.target.value)
-                      }
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
-                    >
-                      <option value="">Selecciona un tipo</option>
-                      <option value="admin">Admin</option>
-                      <option value="vendedor">Vendedor</option>
-                    </select>
-                  </label>
-
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-slate-600">
-                      Usuario
-                    </span>
-                    <input
-                      value={newUserForm.username}
-                      onChange={(e) =>
-                        handleCreateInputChange("username", e.target.value)
-                      }
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
-                      placeholder="Usuario"
-                    />
-                  </label>
-
-                  <label className="space-y-2">
-                    <span className="text-sm font-medium text-slate-600">
-                      Contraseña
-                    </span>
-                    <input
-                      value={newUserForm.password}
-                      type="password"
-                      onChange={(e) =>
-                        handleCreateInputChange("password", e.target.value)
-                      }
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
-                      placeholder="Contraseña"
-                    />
-                  </label>
-
-                  <div className="sm:col-span-2 flex flex-wrap gap-4 justify-end mt-4">
+            {showCreateModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-8">
+                <div className="max-w-3xl w-full rounded-3xl bg-white p-8 text-slate-900 shadow-2xl">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold">Nuevo usuario</h2>
                     <button
-                      type="button"
                       onClick={closeCreateModal}
-                      className="rounded-2xl border border-slate-300 px-6 py-3 text-slate-700 hover:bg-slate-100"
+                      className="text-slate-500 hover:text-slate-900"
                     >
-                      Cancelar
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isRegistering}
-                      className="rounded-2xl bg-orange-500 px-6 py-3 text-white font-semibold hover:bg-orange-600 disabled:opacity-60"
-                    >
-                      {isRegistering ? "Creando..." : "Crear usuario"}
+                      Cerrar
                     </button>
                   </div>
-                </form>
+
+                  <form
+                    onSubmit={handleCreateUser}
+                    className="grid gap-6 sm:grid-cols-2"
+                  >
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-slate-600">
+                        Cédula
+                      </span>
+                      <input
+                        value={newUserForm.cedula}
+                        onChange={(e) =>
+                          handleCreateInputChange("cedula", e.target.value)
+                        }
+                        className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
+                        placeholder="Cédula"
+                      />
+                    </label>
+
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-slate-600">
+                        Nombre
+                      </span>
+                      <input
+                        value={newUserForm.nombre}
+                        onChange={(e) =>
+                          handleCreateInputChange("nombre", e.target.value)
+                        }
+                        className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
+                        placeholder="Nombre"
+                      />
+                    </label>
+
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-slate-600">
+                        Apellido
+                      </span>
+                      <input
+                        value={newUserForm.apellido}
+                        onChange={(e) =>
+                          handleCreateInputChange("apellido", e.target.value)
+                        }
+                        className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
+                        placeholder="Apellido"
+                      />
+                    </label>
+
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-slate-600">
+                        Teléfono
+                      </span>
+                      <input
+                        value={newUserForm.telefono}
+                        onChange={(e) =>
+                          handleCreateInputChange("telefono", e.target.value)
+                        }
+                        className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
+                        placeholder="Teléfono"
+                      />
+                    </label>
+
+                    <label className="space-y-2 sm:col-span-2">
+                      <span className="text-sm font-medium text-slate-600">
+                        Correo
+                      </span>
+                      <input
+                        value={newUserForm.correo}
+                        onChange={(e) =>
+                          handleCreateInputChange("correo", e.target.value)
+                        }
+                        className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
+                        placeholder="Correo"
+                      />
+                    </label>
+
+                    <label className="space-y-2 sm:col-span-2">
+                      <span className="text-sm font-medium text-slate-600">
+                        Dirección
+                      </span>
+                      <input
+                        value={newUserForm.direccion}
+                        onChange={(e) =>
+                          handleCreateInputChange("direccion", e.target.value)
+                        }
+                        className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
+                        placeholder="Dirección"
+                      />
+                    </label>
+
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-slate-600">
+                        Tipo de usuario
+                      </span>
+                      <select
+                        value={newUserForm.tipo_usuario}
+                        onChange={(e) =>
+                          handleCreateInputChange(
+                            "tipo_usuario",
+                            e.target.value,
+                          )
+                        }
+                        className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
+                      >
+                        <option value="">Selecciona un tipo</option>
+                        <option value="admin">Admin</option>
+                        <option value="vendedor">Vendedor</option>
+                      </select>
+                    </label>
+
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-slate-600">
+                        Usuario
+                      </span>
+                      <input
+                        value={newUserForm.username}
+                        onChange={(e) =>
+                          handleCreateInputChange("username", e.target.value)
+                        }
+                        className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
+                        placeholder="Usuario"
+                      />
+                    </label>
+
+                    <label className="space-y-2">
+                      <span className="text-sm font-medium text-slate-600">
+                        Contraseña
+                      </span>
+                      <input
+                        value={newUserForm.password}
+                        type="password"
+                        onChange={(e) =>
+                          handleCreateInputChange("password", e.target.value)
+                        }
+                        className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-orange-500"
+                        placeholder="Contraseña"
+                      />
+                    </label>
+
+                    <div className="sm:col-span-2 flex flex-wrap gap-4 justify-end mt-4">
+                      <button
+                        type="button"
+                        onClick={closeCreateModal}
+                        className="rounded-2xl border border-slate-300 px-6 py-3 text-slate-700 hover:bg-slate-100"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isRegistering}
+                        className="rounded-2xl bg-orange-500 px-6 py-3 text-white font-semibold hover:bg-orange-600 disabled:opacity-60"
+                      >
+                        {isRegistering ? "Creando..." : "Crear usuario"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
-            </div>
-          )}
-        </section>
-<<<<<<< HEAD
-        <BotonLogout />
+            )}
+          </section>
+
+          <Modal
+            isOpen={showEmpresaModal}
+            onClose={() => setShowEmpresaModal(false)}
+            title="Registrar Empresa"
+          >
+            <EmpresaForm
+              onSubmit={(data) => {
+                console.log("Empresa:", data);
+
+                // Aquí luego irá:
+                // createEmpresa(data)
+
+                setShowEmpresaModal(false);
+              }}
+            />
+          </Modal>
+
+          <Modal
+            isOpen={showVehiculoModal}
+            onClose={() => setShowVehiculoModal(false)}
+            title="Registrar Vehículo"
+          >
+            <VehiculoForm
+              onSubmit={(data) => {
+                console.log("Vehículo:", data);
+
+                // Aquí luego irá:
+                // createVehiculo(data)
+
+                setShowVehiculoModal(false);
+              }}
+            />
+          </Modal>
+
+          <BotonLogout />
+        </div>
       </div>
-    </div>
-=======
-
-<Modal
-  isOpen={showEmpresaModal}
-  onClose={() => setShowEmpresaModal(false)}
-  title="Registrar Empresa"
->
-  <EmpresaForm
-    onSubmit={(data) => {
-
-      console.log("Empresa:", data);
-
-      // Aquí luego irá:
-      // createEmpresa(data)
-
-      setShowEmpresaModal(false);
-
-    }}
-  />
-</Modal>
-
-<Modal
-  isOpen={showVehiculoModal}
-  onClose={() => setShowVehiculoModal(false)}
-  title="Registrar Vehículo"
->
-  <VehiculoForm
-    onSubmit={(data) => {
-
-      console.log("Vehículo:", data);
-
-      // Aquí luego irá:
-      // createVehiculo(data)
-
-      setShowVehiculoModal(false);
-
-    }}
-  />
-</Modal>
-
-<BotonLogout />
-
-</div>
-
-</div>
->>>>>>> feat/tablas-crud
-  );
+    );
+  };
 };
