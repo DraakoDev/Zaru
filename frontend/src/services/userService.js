@@ -1,4 +1,12 @@
 const API = "http://localhost:3000";
+<<<<<<< HEAD
+=======
+
+export const getPersonas = async () => {
+
+  const response =
+    await fetch(`${API}/personas`);
+>>>>>>> feat/tablas-crud
 
 export const getPersonas = async (token) => {
   const response = await fetch(`${API}/personas`, {
@@ -23,6 +31,7 @@ export const updatePersona = async (token, cedula, data) => {
   return response.json();
 };
 
+<<<<<<< HEAD
 export const deletePersona = async (token, cedula) => {
   const response = await fetch(`${API}/personas/${cedula}`, {
     method: 'DELETE',
@@ -48,6 +57,17 @@ export const deleteUsuario = async (token, username) => {
   });
   return response.json();
 };
+=======
+export const getUsuarios = async () => {
+
+  const response =
+    await fetch(`${API}/usuarios`);
+
+  return response.json();
+};
+
+export const getVendedores = async () => {
+>>>>>>> feat/tablas-crud
 
 export const updateUsuario = async (token, username, data) => {
   const response = await fetch(`${API}/usuarios/${username}`, {
@@ -90,5 +110,21 @@ export const getVendedores = async (token) => {
     },
     credentials: 'include'
   });
+  return response.json();
+};
+
+export const getEmpresas = async () => {
+
+  const response =
+    await fetch(`${API}/empresas`);
+
+  return response.json();
+};
+
+export const getVehiculos = async () => {
+
+  const response =
+    await fetch(`${API}/vehiculos`);
+
   return response.json();
 };

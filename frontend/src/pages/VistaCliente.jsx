@@ -1,7 +1,56 @@
 import { ShoppingCart, Heart, Car, DollarSign } from "lucide-react";
+<<<<<<< HEAD
+=======
+import { StatCard } from "../components/ui/StatCard";
+import { useContext } from "react";
+import { AuthContext } from "../context/contextos.js";
+>>>>>>> feat/tablas-crud
 import { BotonLogout } from "../components/BotonLogout";
-
+import { VehicleCard } from "../components/VehicleCard";
+import { useContext, useEffect, useState } from "react";
+import { getVehiculos } from "../services/vehiculoService";
 export const VistaCliente = () => {
+<<<<<<< HEAD
+=======
+  const { logout } = useContext(AuthContext);
+const [vehiculos, setVehiculos] = useState([]);
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  cargarVehiculos();
+}, []);
+
+const cargarVehiculos = async () => {
+  try {
+    const data = await getVehiculos();
+
+    const vehiculosAdaptados = data.map((item) => ({
+      id: item.id,
+      nombre: item.nombre,
+      modelo: item.marca_nombre,
+      precio: `$${Number(item.precio).toLocaleString("es-CO")}`,
+      combustible: item.combustible,
+      transmision: item.carroceria,
+      km: `${item.cilindraje}L`,
+      imagen:
+        "https://images.unsplash.com/photo-1555215695-3004980ad54e"
+    }));
+
+    setVehiculos(vehiculosAdaptados);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+if (loading) {
+  return (
+    <div className="min-h-screen bg-[#09090b] flex items-center justify-center text-white">
+      Cargando vehículos...
+    </div>
+  );
+}
+>>>>>>> feat/tablas-crud
   return (
     <div
       className="
@@ -84,6 +133,7 @@ export const VistaCliente = () => {
 
         {/* STATS */}
 
+<<<<<<< HEAD
         <section
           className="
           grid
@@ -267,12 +317,52 @@ export const VistaCliente = () => {
         <section
           className="
           bg-[#111111]
+=======
+      </section>
+
+      {/* STATS */}
+
+      
+
+      {/* TABLA */}
+
+      <section className="space-y-8">
+
+  <div
+    className="
+      bg-[#111111]
+      border
+      border-white/5
+      rounded-[28px]
+      p-6
+    "
+  >
+    <div className="flex gap-4 flex-col md:flex-row">
+
+      <input
+        type="text"
+        placeholder="Buscar por marca..."
+        className="
+          flex-1
+          bg-[#09090b]
+>>>>>>> feat/tablas-crud
           border
           border-white/5
-          rounded-[32px]
-          p-8
-          shadow-[0_0_40px_rgba(0,0,0,.35)]
+          rounded-xl
+          px-4
+          h-12
+          outline-none
         "
+      />
+
+      <button
+        className="
+          bg-orange-500
+          px-8
+          rounded-xl
+          font-semibold
+        "
+<<<<<<< HEAD
         >
           <div
             className="
@@ -409,6 +499,34 @@ export const VistaCliente = () => {
           </div>
         </section>
       </div>
+=======
+      >
+        Buscar
+      </button>
+
+    </div>
+  </div>
+
+  <div
+    className="
+      grid
+      grid-cols-1
+      md:grid-cols-2
+      xl:grid-cols-3
+      gap-8
+    "
+  >
+    {vehiculos.map((vehiculo, index) => (
+      <VehicleCard
+        key={index}
+        vehiculo={vehiculo}
+      />
+    ))}
+  </div>
+
+</section>
+
+>>>>>>> feat/tablas-crud
     </div>
   );
 };
