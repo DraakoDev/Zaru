@@ -4,38 +4,72 @@ import { useEffect,useState } from "react";
 import { getVehiculoById } from "../services/vehiculoService";
 
 export default function DetalleVehiculo() {
-  const vehiculo = {
-    nombre: "Mazda 3 Touring",
-    modelo: "2023",
-    precio: "$85.000.000",
-    kilometraje: "15.000 km",
-    combustible: "Gasolina",
-    transmision: "Automática",
-    color: "Gris Titanio",
-    motor: "2.0L",
-    descripcion:
-      "Vehículo en excelente estado, único dueño, mantenimientos al día, documentos al día y listo para traspaso.",
-    imagen:
-      "https://images.unsplash.com/photo-1555215695-3004980ad54e",
-  };
+const { id } = useParams();
+const navigate = useNavigate();
 
+const [vehiculo, setVehiculo] = useState(null);
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  cargarVehiculo();
+}, []);
+
+const cargarVehiculo = async () => {
+  try {
+    const data = await getVehiculoById(id);
+
+    setVehiculo({
+      id: data.id,
+      nombre: data.nombre,
+      modelo: data.marca_nombre,
+      precio: `$${Number(data.precio).toLocaleString("es-CO")}`,
+      kilometraje: `${data.cilindraje}L`,
+      combustible: data.combustible,
+      transmision: data.carroceria,
+      color: data.color || "No disponible",
+      motor: data.motor,
+      descripcion:
+        `Vehículo ${data.nombre} de la marca ${data.marca_nombre}.`,
+      imagen:
+        "https://images.unsplash.com/photo-1555215695-3004980ad54e",
+    });
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+if (loading) {
+  return (
+    <div className="min-h-screen bg-[#09090b] flex items-center justify-center text-white">
+      Cargando vehículo...
+    </div>
+  );
+}
+
+if (!vehiculo) {
+  return (
+    <div className="min-h-screen bg-[#09090b] flex items-center justify-center text-white">
+      Vehículo no encontrado
+    </div>
+  );
+}
   return (
     <main className="min-h-screen bg-[#09090b] text-white p-8">
 
       <button
-        className="
-          flex
-          items-center
-          gap-2
-          mb-8
-          text-zinc-400
-          hover:text-white
-          transition
-        "
-      >
-        <ArrowLeft size={20} />
-        Volver al catálogo
-      </button>
+  onClick={() => navigate("/cliente")}
+  className="
+    flex
+    items-center
+    gap-2
+    mb-8
+    text-zinc-400
+    hover:text-white
+    transition
+  "
+></button>
 
       <div
         className="

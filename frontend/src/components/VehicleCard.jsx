@@ -4,8 +4,12 @@ import { useNavigate } from "react-router";
 export const VehicleCard = ({ vehiculo }) => {
 
   const navigate = useNavigate();
-
+<Route
+  path="/vehiculo/:id"
+  element={<DetalleVehiculo />}
+/>
   return (
+    
     <div
       className="
         bg-[#111111]

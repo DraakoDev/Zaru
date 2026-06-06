@@ -4,46 +4,47 @@ import { useContext } from "react";
 import { AuthContext } from "../context/contextos.js";
 import { BotonLogout } from "../components/BotonLogout";
 import { VehicleCard } from "../components/VehicleCard";
-
+import { useContext, useEffect, useState } from "react";
+import { getVehiculos } from "../services/vehiculoService";
 export const VistaCliente = () => {
   const { logout } = useContext(AuthContext);
-const vehiculos = [
-  {
-    id: 1,
-    nombre: "Mazda 3 Touring",
-    modelo: "2023",
-    precio: "$85.000.000",
-    km: "15.000 km",
-    combustible: "Gasolina",
-    transmision: "Automática",
-    imagen:
-      "https://images.unsplash.com/photo-1555215695-3004980ad54e"
-  },
+const [vehiculos, setVehiculos] = useState([]);
+const [loading, setLoading] = useState(true);
 
-  {
-    id: 2,
-    nombre: "Toyota Corolla",
-    modelo: "2022",
-    precio: "$78.000.000",
-    km: "22.000 km",
-    combustible: "Híbrido",
-    transmision: "Automática",
-    imagen:
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70"
-  },
+useEffect(() => {
+  cargarVehiculos();
+}, []);
 
-  {
-    id: 3,
-    nombre: "BMW Serie 3",
-    modelo: "2024",
-    precio: "$210.000.000",
-    km: "5.000 km",
-    combustible: "Gasolina",
-    transmision: "Automática",
-    imagen:
-      "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7"
+const cargarVehiculos = async () => {
+  try {
+    const data = await getVehiculos();
+
+    const vehiculosAdaptados = data.map((item) => ({
+      id: item.id,
+      nombre: item.nombre,
+      modelo: item.marca_nombre,
+      precio: `$${Number(item.precio).toLocaleString("es-CO")}`,
+      combustible: item.combustible,
+      transmision: item.carroceria,
+      km: `${item.cilindraje}L`,
+      imagen:
+        "https://images.unsplash.com/photo-1555215695-3004980ad54e"
+    }));
+
+    setVehiculos(vehiculosAdaptados);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
   }
-];
+};
+if (loading) {
+  return (
+    <div className="min-h-screen bg-[#09090b] flex items-center justify-center text-white">
+      Cargando vehículos...
+    </div>
+  );
+}
   return (
   <div
     className="
